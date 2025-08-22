@@ -24,62 +24,66 @@
       top: 10px;
       left: 10px;
       padding: 6px 12px;
-      background: black;
-      color: lime;
-      border-radius: 10px;
-      font-size: 18px;
+      background: rgba(0,0,0,0.7);
+      color: #00ff00;
       font-weight: bold;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      z-index: 9999;
-    }
-    select {
-      font-size: 16px;
-      padding: 6px;
-      margin-top: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
+      cursor: move; /* biar keliatan bisa digeser */
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <h2>DX Fake FPS Monitor</h2>
+  <h2>Pilih FPS</h2>
+  <div class="switch">
+    <select id="fpsSelect">
+      <option value="30">30 FPS</option>
+      <option value="60">60 FPS</option>
+      <option value="90">90 FPS</option>
+      <option value="120">120 FPS</option>
+    </select>
+    <button onclick="toggleFPS()">Tampilkan</button>
+  </div>
 
-  <!-- Switch On/Off -->
-  <label class="switch">
-    <input type="checkbox" id="toggleFps"> Show FPS Monitoring
-  </label>
-  <br>
-
-  <!-- Dropdown Pilihan FPS -->
-  <label for="fpsSelect">Choose FPS:</label>
-  <select id="fpsSelect">
-    <option value="30">30</option>
-    <option value="60">60</option>
-    <option value="90">90</option>
-    <option value="120" selected>120</option>
-    <option value="144">144</option>
-    <option value="240">240</option>
-  </select>
-
-  <!-- Overlay FPS -->
-  <div id="fpsBox">FPS: 120</div>
+  <div id="fpsBox">FPS: 60</div>
 
   <script>
-    const toggle = document.getElementById("toggleFps");
-    const fpsBox = document.getElementById("fpsBox");
-    const fpsSelect = document.getElementById("fpsSelect");
+    let fpsBox = document.getElementById("fpsBox");
+    let fpsSelect = document.getElementById("fpsSelect");
 
-    // Show/Hide Overlay
-    toggle.addEventListener("change", () => {
-      if (toggle.checked) {
+    function toggleFPS() {
+      if (fpsBox.style.display === "none") {
         fpsBox.style.display = "block";
+        fpsBox.innerText = "FPS: " + fpsSelect.value;
       } else {
         fpsBox.style.display = "none";
       }
+    }
+
+    fpsSelect.addEventListener("change", () => {
+      if (fpsBox.style.display === "block") {
+        fpsBox.innerText = "FPS: " + fpsSelect.value;
+      }
     });
 
-    // Update FPS value
-    fpsSelect.addEventListener("change", () => {
-      fpsBox.textContent = "FPS: " + fpsSelect.value;
+    // --- fungsi drag/geser ---
+    let offsetX, offsetY, isDragging = false;
+
+    fpsBox.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - fpsBox.offsetLeft;
+      offsetY = e.clientY - fpsBox.offsetTop;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        fpsBox.style.left = (e.clientX - offsetX) + "px";
+        fpsBox.style.top = (e.clientY - offsetY) + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
     });
   </script>
 </body>
